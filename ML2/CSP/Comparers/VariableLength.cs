@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ML2.Comparers
+namespace ML2.CSP.Comparers
 {
     public class VariableCompare : IComparer<Variable>
     {

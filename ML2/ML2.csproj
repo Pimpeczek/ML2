@@ -43,15 +43,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Comparers\VariableLength.cs" />
+    <Compile Include="Board.cs" />
+    <Compile Include="CSP\Constraint.cs" />
+    <Compile Include="CSP\Domain.cs" />
+    <Compile Include="CSP\ICSPProblem.cs" />
+    <Compile Include="CSP\Solver.cs" />
+    <Compile Include="CSP\State.cs" />
+    <Compile Include="CSP\Variable.cs" />
+    <Compile Include="Misc.cs" />
+    <Compile Include="CSP\Comparers\VariableLength.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sudoku.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="CSP\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
