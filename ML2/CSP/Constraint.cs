@@ -8,15 +8,15 @@ namespace ML2.CSP
 {
     public class Constraint
     {
-        protected Func<int[][], int, int, bool> check;
+        protected Func<int[][], bool> check;
 
-        public Constraint(Func<int[][], int, int, bool> check)
+        public Constraint(Func<int[][], bool> check)
         {
             this.check = check;
         }
-        public bool Check(int[][] state, int x, int y)
+        public bool Check(int[][] state)
         {
-            return check(state, x, y);
+            return check(state);
         }
     }
 }

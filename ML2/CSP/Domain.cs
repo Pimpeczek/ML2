@@ -14,18 +14,6 @@ namespace ML2.CSP
         public int MaskedSize { get; protected set; }
         protected bool maskClear;
 
-        public Domain(int lowerBoud, int upperBoud)
-        {
-            Values = new List<int>();
-            Mask = new bool[upperBoud - lowerBoud + 1];
-            for (int i = lowerBoud; i <= upperBoud; i++)
-            {
-                Mask[i] = true;
-                Values.Add(i);
-            }
-            maskClear = true;
-            MaskedSize = Values.Count;
-        }
 
         public Domain(List<int> values)
         {

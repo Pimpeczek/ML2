@@ -59,7 +59,7 @@ namespace ML2.CSP
                     {
                         variables[curVar + 1].Domain.ResetMask();
                     }
-                    else if (cspProblem.CheckAll(newState.Values))
+                    else if (CheckConstraints(newState))
                     {
                         if (curVar == variables.Length-1)
                         {
@@ -86,6 +86,16 @@ namespace ML2.CSP
             }
             variables[curVar].Set = false;
             return false;
+        }
+
+        protected bool CheckConstraints(State state)
+        {
+            for(int c = 0; c < constraints.Length; c++)
+            {
+                if (!constraints[c].Check(state.Values))
+                    return false;
+            }
+            return true;
         }
 
         public void ResetDomains()

@@ -164,17 +164,15 @@ namespace ML2
                     }
                 }
             }
-            Array.Sort(vars, new CSP.Comparers.VariableCompare());
+            //Array.Sort(vars, new CSP.Comparers.VariableCompare());
             //Array.Reverse(vars);
             return vars;
         }
 
         public CSP.Constraint[] PrepareConstraints()
         {
-            CSP.Constraint[] con = new CSP.Constraint[3];
-            con[0] = new CSP.Constraint((s, x, y) => CheckRow(s, y));
-            con[1] = new CSP.Constraint((s, x, y) => CheckCol(s, x));
-            con[2] = new CSP.Constraint(CheckSquare);
+            CSP.Constraint[] con = new CSP.Constraint[1];
+            con[0] = new Constraint(CheckAll);
             return con;
         }
 
@@ -231,7 +229,7 @@ namespace ML2
                 return false;
             if (!CheckCol(state, C))
                 return false;
-            if (!CheckSquare(state, (R / 3) * 3, (C % 3) * 3))
+            if (!CheckSquare(state, (R / 3) * 3, (C / 3) * 3))
                 return false;
             return true;
         }
