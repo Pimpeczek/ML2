@@ -10,24 +10,31 @@ namespace ML2
     public class Sudoku : CSP.ICSPProblem
     {
         public Board board;
-        public static readonly int Size = 9;
-        public static readonly int SquareSize = 3;
+        public int SizeR { get; protected set; }
+        public int SizeC { get; protected set; }
+        public int SquareSizeC { get; protected set; }
+        public int SquareSizeR { get; protected set; }
         public int InitialEmptyCells { get; protected set; }
         public Sudoku(string source)
         {
+            string[] split = source.Split(';');
+            SizeR = int.Parse(split[2]);
+            SizeC = int.Parse(split[3]);
+            SquareSizeR = int.Parse(split[4]);
+            SquareSizeC = int.Parse(split[5]);
             InitialEmptyCells = 0;
-            for (int i = source.Length - 1; i >= 0; i--)
+            for (int i = split[6].Length - 1; i >= 0; i--)
             {
-                if (source[i] == '.')
+                if (split[6][i] == '.')
                     InitialEmptyCells++;
             }
-            board = new Board(source, Size, SquareSize);
+            board = new Board(split[6], SizeR, SizeC, SquareSizeR, SquareSizeC);
         }
 
         public bool CheckRow(int[][] state, int row)
         {
-            bool[] checkedNumbers = new bool[Size];
-            for (int c = Size - 1; c >= 0; c--)
+            bool[] checkedNumbers = new bool[SizeR];
+            for (int c = SizeR - 1; c >= 0; c--)
             {
                 if (state[row][c] > 0)
                 {
@@ -46,8 +53,8 @@ namespace ML2
 
         public bool CheckCol(int[][] state, int col)
         {
-            bool[] checkedNumbers = new bool[Size];
-            for (int r = Size - 1; r >= 0; r--)
+            bool[] checkedNumbers = new bool[SizeC];
+            for (int r = SizeC - 1; r >= 0; r--)
             {
                 if (state[r][col] > 0)
                 {
@@ -66,14 +73,14 @@ namespace ML2
 
         public bool CheckSquare(int[][] state, int c, int r)
         {
-            bool[] checkedNumbers = new bool[9];
-            c = (c / SquareSize) * SquareSize;
-            r = (r / SquareSize) * SquareSize;
-            int cc = c + SquareSize;
-            int rr = r + SquareSize;
-            for (int i = rr - 1; i >= r; i--)
+            bool[] checkedNumbers = new bool[SquareSizeC * SquareSizeR];
+            int cb = (c / SquareSizeC) * SquareSizeC;
+            int rb = (r / SquareSizeR) * SquareSizeR;
+            int cc = cb + SquareSizeC;
+            int rr = rb + SquareSizeR;
+            for (int i = rr - 1; i >= rb; i--)
             {
-                for (int j = cc - 1; j >= c; j--)
+                for (int j = cc - 1; j >= cb; j--)
                 {
                     if (state[i][j] > 0)
                     {
@@ -104,23 +111,34 @@ namespace ML2
 
         public bool CheckAll(int[][] state)
         {
-            for (int r = 0; r < Size; r++)
+            for (int r = 0; r < SizeR; r++)
             {
                 if (!CheckRow(state, r))
                     return false;
-                if (!CheckCol(state, r))
+            }
+
+            for (int c = 0; c < SizeC; c++)
+            {
+                if (!CheckCol(state, c))
                     return false;
-                if (!CheckSquare(state, (r / 3) * 3, (r % 3) * 3))
-                    return false;
+            }
+
+            for (int r = SizeR / SquareSizeR-1; r >= 0; r--)
+            {
+                for (int c = SizeC / SquareSizeC - 1; c >= 0; c--)
+                {
+                    if (!CheckSquare(state, SquareSizeR * r, SquareSizeC * c))
+                        return false;
+                }
             }
             return true;
         }
 
         public bool IsFilled(int[][] state)
         {
-            for (int r = 0; r < Size; r++)
+            for (int r = 0; r < SizeR; r++)
             {
-                for (int c = 0; c < Size; c++)
+                for (int c = 0; c < SizeC; c++)
                 {
                     if (state[r][c] == 0)
                         return false;
@@ -136,36 +154,44 @@ namespace ML2
             CSP.Domain dom;
             List<int> domain;
             int counter = 0;
-            for (int i = 0; i < Size; i++)
+            for (int i = 0; i < SizeR; i++)
             {
-                for (int j = 0; j < Size; j++)
+                for (int j = 0; j < SizeC; j++)
                 {
                     if (board.CurState[i, j] == 0)
                     {
                         domain = new List<int>();
-                        for (int n = 1; n <= Size; n++)
+                        for (int n = 1; n <= SquareSizeC * SquareSizeR; n++)
                         {
                             domain.Add(n);
                         }
-                        for (int n = 0; n < Size; n++)
+                        
+                        for (int n = 0; n < SizeC; n++)
                         {
                             if (domain.Contains(board.CurState[i, n]))
                                 domain.Remove(board.CurState[i, n]);
 
+                        }
+                        for (int n = 0; n < SizeR; n++)
+                        {
                             if (domain.Contains(board.CurState[n, j]))
                                 domain.Remove(board.CurState[n, j]);
-
-                            if (domain.Contains(board.CurState[(n / SquareSize), n % SquareSize]))
-                                domain.Remove(board.CurState[(i / SquareSize) * SquareSize + (n / SquareSize), (j / SquareSize) * SquareSize + n % SquareSize]);
                         }
+                        for (int r = 0; r < SquareSizeR; r++)
+                        {
+                            for (int c = 0; c < SquareSizeC; c++)
+                            {
+                                if (domain.Contains(board.CurState[(i / SquareSizeR) * SquareSizeR + r, (j / SquareSizeC) * SquareSizeC + c ]))
+                                    domain.Remove(board.CurState[(i / SquareSizeR) * SquareSizeR + r, (j / SquareSizeC) * SquareSizeC + c ]);
+                            }
+                        }
+                        
                         vars[counter] = new CSP.Variable(i, j, new Domain(domain));
-                        //Console.WriteLine(vars[counter]);
+                        
                         counter++;
                     }
                 }
             }
-            //Array.Sort(vars, new CSP.Comparers.VariableCompare());
-            //Array.Reverse(vars);
             return vars;
         }
 

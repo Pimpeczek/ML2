@@ -14,7 +14,7 @@ namespace ML2.CSP
         protected ICSPProblem cspProblem;
         public State FinalState;
         protected int curVar;
-        int counter = 0;
+        public int counter = 0;
         public double PossibleCombinations { get; protected set; }
         public Solver(ICSPProblem problem)
         {
@@ -34,6 +34,7 @@ namespace ML2.CSP
 
         public void Calculate()
         {
+            counter = 0;
             Try();
             stateStack.Clear();
 
@@ -41,6 +42,7 @@ namespace ML2.CSP
 
         protected bool Try()
         {
+            counter++;
             curVar++;
             if (curVar >= variables.Length)
                 return false;
@@ -49,7 +51,6 @@ namespace ML2.CSP
             variables[curVar].Set = true;
             for (int d = variables[curVar].DomainSize - 1; d >= 0; d--)
             {
-                
                 if (variables[curVar].Domain.Mask[d])
                 {
                     
